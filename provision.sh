@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+##
+# BASICALLY JUST:
+# https://github.com/NicoHood/NicoHood.github.io/wiki/Raspberry-Pi-Encrypted-Btrfs-Root
+# but automated, and with a keyfile
+##
+
 drive="$1"
 keyname="$2"
 keypart="$3"
