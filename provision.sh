@@ -184,6 +184,7 @@ sudo mkdir -p "${ssh_dir}"
 sudo chmod 700 "${ssh_dir}"
 cat "${hostname}_rsa.pub" | sudo tee "${ssh_dir}/authorized_keys"
 sudo chmod 600 "${ssh_dir}/authorized_keys"
+sudo chown -R alarm:alarm "${ssh_dir}"
 
 sudo umount -R "${MOUNTPOINT}"
 
