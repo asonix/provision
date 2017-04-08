@@ -51,6 +51,11 @@ check_empty "${keyfile}"
 check_empty "${keypart}"
 check_empty "${mapper}"
 
+echo "Enter hostname:"
+read hostname
+
+check_empty "$hostname"
+
 keyuuid=$(lsblk "${keypart}" -o uuid | tail -1)
 keypart_fstype=$(lsblk "${keypart}" -o fstype | tail -1)
 
@@ -165,9 +170,23 @@ sed -i '/%wheel.ALL=(ALL) ALL/s/^# //g' /etc/sudoers
 usermod -a -G users alarm
 usermod -a -G wheel alarm
 passwd -l root
+
+echo ${hostname} > /etc/hostname
+
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+
 EOF
 
+ssh_dir="${MOUNTPOINT}/home/alarm/.ssh"
+
+ssh-keygen -t rsa -N '' -C "Generated for ${hostname}" -f "${hostname}_rsa"
+sudo mkdir -p "${ssh_dir}"
+sudo chmod 700 "${ssh_dir}"
+cat "${hostname}_rsa.pub" | sudo tee "${ssh_dir}/authorized_keys"
+sudo chmod 600 "${ssh_dir}/authorized_keys"
+
 sudo umount -R "${MOUNTPOINT}"
+
 sudo cryptsetup close "${mapper}"
 
 echo "Don't forget to change passwords!"
